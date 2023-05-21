@@ -66,27 +66,31 @@ const LoginCard = (props) => {
 
   return (
     <article className="flex items-center justify-center h-screen">
-      <Form className="flex flex-col bg-white rounded-md" initialValues={{ rememberMe: false, usernameMessage }} onFinish={() => handleUser()} >
-        <h1 className="text-white mx-auto py-14 px-40 text-2xl w-96 rounded-md" style={{ background: "#1890FF" }} tabIndex={1}>{props.label}</h1>
-        <div className="flex gap-3 justify-start w-10/12 mx-auto my-3 py-3 pr-0" style={{ background: "#F0F2F5" }}>
-          <Link to="/login" className="text-black focus:underline underline-offset-4">Login</Link>
-          <Link to="/signup" className="text-black focus:underline underline-offset-4">Signup</Link>
-        </div>
-        <div className="flex flex-col mx-auto w-10/12">
-          <p style={{ display: usernameError, color: "#ff4d4f" }}>{usernameMessage}</p>
-          <Form.Item name="username" rules={[{ required: true, message: "Please input a username" }]}>
-            <Input prefix={<UserOutlined />} placeholder="username" size="large" onChange={(event) => updateUsername(event)}/>
-          </Form.Item>
-          <Form.Item name="password" rules={[{ required: true, message: "Please input a password" }]}>
-            <Input prefix={<LockOutlined />} placeholder="password" size="large" type="password" onChange={(value) => updatePassword(value)}/>
-          </Form.Item>
-          <Form.Item name="rememberMe" valuePropName="checked">
-            <div className="flex justify-between items-center">
-              <Checkbox>Remember Me</Checkbox>
-              <Button htmlType="submit" type="primary" className="w-1/4">{props.button}</Button>
-            </div>
-          </Form.Item>
-        </div>
+      <Form className="flex flex-col" initialValues={{ rememberMe: false, usernameMessage }} onFinish={() => handleUser()} >
+        <h1 className="text-white mx-auto py-14 px-40 text-2xl w-96" style={{ background: "#5C415D", borderRadius:"0.375rem 0.375rem 0 0"}} tabIndex={1}>
+          {props.label}
+        </h1>
+        <section className="bg-white" style={{borderRadius:"0 0 0.375rem 0.375rem"}}>  
+          <div className="flex gap-3 justify-start w-10/12 mx-auto my-3 py-3 pr-0" style={{ background: "#F0F2F5" }}>
+            <Link to="/login" className="text-black focus:underline underline-offset-4">Login</Link>
+            <Link to="/signup" className="text-black focus:underline underline-offset-4">Signup</Link>
+          </div>
+          <div className="flex flex-col mx-auto w-10/12">
+            <p style={{ display: usernameError, color: "#ff4d4f" }}>{usernameMessage}</p>
+            <Form.Item name="username" rules={[{ required: true, message: "Please input a username" }]}>
+              <Input prefix={<UserOutlined />} placeholder="username" size="large" onChange={(event) => updateUsername(event)}/>
+            </Form.Item>
+            <Form.Item name="password" rules={[{ required: true, message: "Please input a password" }]}>
+              <Input prefix={<LockOutlined />} placeholder="password" size="large" type="password" onChange={(value) => updatePassword(value)}/>
+            </Form.Item>
+            <Form.Item name="rememberMe" valuePropName="checked">
+              <div className="flex justify-between items-center">
+                <Checkbox>Remember Me</Checkbox>
+                <Button htmlType="submit" type="primary" className="w-1/4">{props.button}</Button>
+              </div>
+            </Form.Item>
+          </div>
+        </section>
       </Form>
     </article>
   );

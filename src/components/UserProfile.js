@@ -69,7 +69,7 @@ const UserProfile = (props) => {
               <Input prefix={<LockOutlined />} placeholder="confirm password" size="large" onChange={(value) => handleConfirmPassword(value)} tabIndex={1}/>
             </Form.Item>
             <p className="text-xl bg-black text-white p-3" style={{display:displayError}} tabIndex={1}>{errorMessage}</p>
-            <Button type="primary" htmlType="submit" className="w-2/6 sm:w-1/6 lg:w-1/12" style={{ background: "#1750FF" }} tabIndex={1}>Submit</Button>
+            <Button type="primary" htmlType="submit" className="w-2/6 sm:w-1/6 lg:w-1/12" tabIndex={1}>Submit</Button>
           </section>
         </Form>
       </section>

@@ -1,15 +1,18 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Avatar, Button, Dropdown } from "antd";
+import { Avatar, Button, Dropdown, Select } from "antd";
 import { useEffect, useState } from "react";
 import { LoginInfo } from "../global-objects/LoginInfo";
 import { UserOutlined } from "@ant-design/icons";
+import { hover } from "@testing-library/user-event/dist/hover";
+import { click } from "@testing-library/user-event/dist/click";
+import { triggerFocus } from "antd/es/input/Input";
 const Header = () => {
-  const [displayButtons, setDisplayButtons] = useState("inline");
-  const [displayAccountInfo, setDisplayAccountInfo] = useState("none");
   const [LoggedInTabIndex, setLoggedInTabIndex] = useState('-1');
-  const [LoggedOutTabIndex, setLoggedOutTabIndex] = useState('1')
+  const [LoggedOutTabIndex, setLoggedOutTabIndex] = useState('1');
+  const [LoginState, setLoginState] = useState({LoggedIn:false});
   const navigate = useNavigate();
 
+  //Stores the links found in the dropdown menu
   const menuItems = [
     {
       key:'1', 
@@ -21,36 +24,24 @@ const Header = () => {
     }
   ];
 
+  //Handles logging out
   const logOut = () => {
     LoginInfo.username = null;
     LoginInfo.password = null;
     LoginInfo.favorites = [];
-    setDisplayAccountInfo("none");
-    setDisplayButtons("inline")
+    setLoginState({LoggedIn:false});
   }
 
+  //Handles what happens when the user clicks on a dropdown link
   const onClick = (key) => {
     if(key.key === '2') {
       logOut()
     }
   }
 
-  const uppercaseUsername = (username) => {
-    if (username !== null) {
-      const arr = Array.from(username);
-      arr[0] = arr[0].toUpperCase();
-      username = "";
-      arr.forEach((e) => (username += e));
-      return username;
-    }
-  };
-
   useEffect(() => {
     if (LoginInfo.username !== null) {
-      setDisplayAccountInfo("inline");
-      setDisplayButtons("none");
-      setLoggedInTabIndex("1");
-      setLoggedOutTabIndex("-1");
+      setLoginState({LoggedIn:true});
     }
   }, [navigate]);
 
@@ -65,16 +56,16 @@ const Header = () => {
           <Link to="/settings" className="focus:underline underline-offset-4" tabIndex={1}>Settings</Link>
         </div>
         <div className="flex gap-5 text-white flex-col sm:flex-row">
-          <Link to="/login" tabIndex={LoggedOutTabIndex}>
-            <Button size="small" className="text-white" style={{ background: "transparent", display: displayButtons }}>Login</Button>
+          <Link to="/login" tabIndex={LoginState.LoggedIn ? "-1" : "1"}>
+            <Button size="small" className="text-white" style={{ background: "transparent", display: LoginState.LoggedIn ? "none" : "inline"}}>Login</Button>
           </Link>
-          <Link to="/signup" tabIndex={LoggedOutTabIndex}>
-            <Button size="small" className="text-white" style={{ background: "transparent", display: displayButtons }}>Signup</Button>
+          <Link to="/signup" tabIndex={LoginState.LoggedIn ? "-1" : "1"}>
+            <Button size="small" className="text-white" style={{ background: "transparent", display: LoginState.LoggedIn ? "none" : "inline" }}>Signup</Button>
           </Link>
-          <Dropdown menu={{items:menuItems, onClick}} tabIndex={LoggedInTabIndex}>
+          <Dropdown menu={{items:menuItems, onClick}}>
             <div className="flex flex-row items-center gap-2">
-              <Avatar size="default" icon={<UserOutlined />} style={{ display: displayAccountInfo }}/>
-              <p style={{ display: displayAccountInfo }}>{uppercaseUsername(LoginInfo.username)}</p>
+              <Avatar size="default" icon={<UserOutlined />} style={{ display: LoginState.LoggedIn ? "inline" : "none" }}/>
+              <p style={{ display: LoginState.LoggedIn ? "inline" : "none"  }}>{LoginInfo.username}</p>
             </div>
           </Dropdown>
         </div>

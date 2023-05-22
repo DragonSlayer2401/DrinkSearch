@@ -10,6 +10,7 @@ const DetailsGrid = (props) => {
   const [displayState2, setDisplay2] = useState("none");
   const navigate = useNavigate();
 
+  //Determines whether the favorite icon is toggled on or off 
   useEffect(() => {
     if (LoginInfo.favorites !== null) {
       if (LoginInfo.favorites.length > 0) {
@@ -26,8 +27,9 @@ const DetailsGrid = (props) => {
     }
   }, [props.name]);
 
+  //Handles what happens when you click on the favorite icon when logged out
   const clickHandler = (measurements, ingredients) => {
-    //Switches to Login page if the user is not loggedin
+    //Switches to Login page if the user is not logged in
     if(LoginInfo.username === null) {
       navigate("/login");
       //Stops console errors
@@ -49,26 +51,26 @@ const DetailsGrid = (props) => {
           },
         })
         .then((result) => {
-          axios
-            .get(`http://localhost:4000/favorites/${LoginInfo.username}`)
+          axios.get(`http://localhost:4000/favorites/${LoginInfo.username}`)
             .then((result) => {
               const ids = result.data.ids;
-              axios
-                .patch("http://localhost:4000/users/drinks", {
-                  user: {
-                    username: LoginInfo.username,
-                    password: LoginInfo.password,
-                    ids,
-                  },
-                })
-                .then((result) => {
-                  axios
-                    .get(`http://localhost:4000/users/${LoginInfo.username}`)
-                    .then((userInfo) => {
+              axios.get(`http://localhost:4000/users/${LoginInfo.username}`).then(userInfo => {
+                axios.patch("http://localhost:4000/users/drinks", {
+                    user: {
+                      username: LoginInfo.username,
+                      password: userInfo.data.user.password,
+                      ids,
+                    },
+                  })
+                  .then((result) => {
+                    axios
+                      .get(`http://localhost:4000/users/${LoginInfo.username}`)
+                      .then((userInfo) => {
                       LoginInfo.favorites = userInfo.data.favorites;
                     });
                 });
-            });
+              })
+          });
         });
     }
     //Removes the drink as a favorite
@@ -94,12 +96,14 @@ const DetailsGrid = (props) => {
     }
   };
 
+  //Creates the list of ingredients
   const createList = (ingredients) => {
     return ingredients.map((element, index) => <li key={index} className="list-disc mb-2 text-lg" tabIndex={1}>{`${element}`}</li>)
   };
 
   //Turns the string of instructions into a list of items
   const formatter = (instructions) => {
+    //Separates the instructions based on periods
     let array = instructions.split('.');
     //Fixes messed up ()
     for (let i = 0; i < array.length; i++) {
@@ -119,7 +123,7 @@ const DetailsGrid = (props) => {
     if(array[array.length-1] === ''){
       array.pop()
     }
-
+    //Creates the list of intructions
     return array.map((element, index) => <li key={index} className="list-decimal mt-2 text-lg ml-20" tabIndex={1}>{`${element}.`}</li>)
   };
 
@@ -128,8 +132,11 @@ const DetailsGrid = (props) => {
       <img src={props.image} alt={props.name} className="w-full col-span-2 lg:h-full sm:col-span-1 rounded-md" tabIndex={1}/>
       <div className="flex flex-col text-white col-span-2 sm:col-span-1">
         <section style={styles.cards} className="mb-3 flex items-center justify-center rounded-md">
+          {/* Toggled off favorite icon */}
           <HeartOutlined style={{width: "19.28px", color: "red", cursor: "pointer", display: displayState1,}}onClick={() => clickHandler(props.measurements, props.ingredients)} aria-label="favorite toggled off" tabIndex={1}/>
+          {/* Toggled on favorite icon */}
           <HeartFilled style={{width: "19.28px", color: "red", cursor: "pointer", display: displayState2,}} onClick={() => clickHandler()} aria-label="favorite toggled on" tabIndex={1}/>
+          {/* Drink name heading */}
           <h1 className="text-3xl p-3 text-center" tabIndex={1}>{props.name}</h1>
         </section>
         <section style={styles.cards} className="h-full w-full rounded-md">

@@ -1,14 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Avatar, Button, Dropdown, Select } from "antd";
+import { Avatar, Button, Dropdown,} from "antd";
 import { useEffect, useState } from "react";
 import { LoginInfo } from "../global-objects/LoginInfo";
 import { UserOutlined } from "@ant-design/icons";
-import { hover } from "@testing-library/user-event/dist/hover";
-import { click } from "@testing-library/user-event/dist/click";
-import { triggerFocus } from "antd/es/input/Input";
+
 const Header = () => {
-  const [LoggedInTabIndex, setLoggedInTabIndex] = useState('-1');
-  const [LoggedOutTabIndex, setLoggedOutTabIndex] = useState('1');
   const [LoginState, setLoginState] = useState({LoggedIn:false});
   const navigate = useNavigate();
 

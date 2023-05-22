@@ -18,24 +18,7 @@ app.use(
 
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-  })
-);
-
-//Doesn't work
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-//   );
-//   if (req.method === "OPTIONS") {
-//     res.header("Access-Control-Allow-Methods", "GET, POST, DELETE");
-//   }
-//   next();
-// });
+app.use(cors({origin: "http://localhost:3000"}));
 
 app.get("/", (req, res, next) =>
   res.status(200).json({ message: "Service is running", method: req.method })

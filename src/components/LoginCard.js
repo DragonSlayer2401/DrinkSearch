@@ -10,11 +10,13 @@ const LoginCard = (props) => {
   const [userInfo, setUserInfo] = useState({username:"", password:""});
   const navigate = useNavigate();
 
+  //Updates the username in the userInfo state
   const updateUsername = (value) => {
     setUsernameError({...usernameError, display:"none"});
     setUserInfo({...userInfo, username: value.target.value});
   };
 
+  //Updates the password in the userInfo state
   const updatePassword = (value) => {
     setUserInfo({...userInfo, password: value.target.value});
   };

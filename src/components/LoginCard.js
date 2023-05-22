@@ -6,36 +6,53 @@ import { LoginInfo } from "../global-objects/LoginInfo";
 import axios from "axios";
 
 const LoginCard = (props) => {
-  const [usernameMessage, setUsernameMessage] = useState("Please input a username");
-  const [usernameError, setUsernameError] = useState("none");
-  const [username, setUsername] = useState();
-  const [password, setPassword] = useState();
+  const [usernameError, setUsernameError] = useState({message:"", display:"none"});
+  const [userInfo, setUserInfo] = useState({username:"", password:""});
   const navigate = useNavigate();
 
+  //Updates the username in the userInfo state
   const updateUsername = (value) => {
-    setUsernameError("none");
-    setUsername(value.target.value);
+    setUsernameError({...usernameError, display:"none"});
+    setUserInfo({...userInfo, username: value.target.value});
   };
 
+  //Updates the password in the userInfo state
   const updatePassword = (value) => {
-    setPassword(value.target.value);
+    setUserInfo({...userInfo, password: value.target.value});
   };
 
+  //Upercases the first letter of the username
+  const uppercaseUsername = (username) => {
+    if (username !== null) {
+      const arr = Array.from(username);
+      arr[0] = arr[0].toUpperCase();
+      username = "";
+      arr.forEach((e) => (username += e));
+      return username;
+    }
+  };
+
+  //Handles both signing up and logging in
   const handleUser = () => {
+    //Handles logging in
     if (props.label === "Login") {
+      //Finds the user in the database
       axios
         .post("http://localhost:4000/users/find", {
           user: {
-            username: username,
-            password: password,
+            username: userInfo.username,
+            password: userInfo.password,
           },
         })
         .then((result) => {
+          //Changes to the signup page if the user is not found
           if (result.data.userFound === false) {
             navigate("/signup");
-          } else {
-            LoginInfo.username = result.data.result.user.username;
-            LoginInfo.password = result.data.result.user.password;
+          } 
+          //Logs the user into their account
+          else {
+            LoginInfo.username = uppercaseUsername(userInfo.username);
+            //Adds the user's favorited drinks
             axios.get(`http://localhost:4000/users/${LoginInfo.username}`).then((userInfo) => {
               LoginInfo.favorites = userInfo.data.favorites;
             });
@@ -43,19 +60,22 @@ const LoginCard = (props) => {
           }
         });
     }
+    //Handles signing up
     else {
+      //Adds the user to the database
       axios
         .post("http://localhost:4000/users/add", {
           user: {
-            username: username,
-            password: password,
+            username: userInfo.username,
+            password: userInfo.password,
           },
         })
         .then((result) => {
+          //Displays error if user already exists
           if (result.data.message === "user already exists") {
-            setUsernameError("block");
-            setUsernameMessage(`Username ${username} is already taken`);
+            setUsernameError({message:`Username ${userInfo.username} is already taken`, display:"block"});
           }
+          //Changes to the login page after the user signs up
           else {
             alert("Account Created");
             navigate("/login");
@@ -66,17 +86,21 @@ const LoginCard = (props) => {
 
   return (
     <article className="flex items-center justify-center h-screen">
-      <Form className="flex flex-col" initialValues={{ rememberMe: false, usernameMessage }} onFinish={() => handleUser()} >
+      <Form className="flex flex-col" initialValues={{ rememberMe: false }} onFinish={() => handleUser()} >
+        {/* Contains the Login and Signup heading (upper part of form) */}
         <h1 className="text-white mx-auto py-14 px-40 text-2xl w-96" style={{ background: "#5C415D", borderRadius:"0.375rem 0.375rem 0 0"}} tabIndex={1}>
           {props.label}
         </h1>
-        <section className="bg-white" style={{borderRadius:"0 0 0.375rem 0.375rem"}}>  
+        {/* Bottom part of the form */}
+        <section className="bg-white" style={{borderRadius:"0 0 0.375rem 0.375rem"}}>
+          {/* Contains the login and signup links inside of the form */}
           <div className="flex gap-3 justify-start w-10/12 mx-auto my-3 py-3 pr-0" style={{ background: "#F0F2F5" }}>
             <Link to="/login" className="text-black focus:underline underline-offset-4">Login</Link>
             <Link to="/signup" className="text-black focus:underline underline-offset-4">Signup</Link>
           </div>
+          {/* Contains the form inputs and buttons/checkboxes */}
           <div className="flex flex-col mx-auto w-10/12">
-            <p style={{ display: usernameError, color: "#ff4d4f" }}>{usernameMessage}</p>
+            <p style={{ display: usernameError.display, color: "#ff4d4f" }}>{usernameError.message}</p>
             <Form.Item name="username" rules={[{ required: true, message: "Please input a username" }]}>
               <Input prefix={<UserOutlined />} placeholder="username" size="large" onChange={(event) => updateUsername(event)}/>
             </Form.Item>

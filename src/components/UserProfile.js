@@ -6,29 +6,30 @@ import { useState } from "react";
 import axios from "axios";
 
 const UserProfile = (props) => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [displayError, setDisplayError] = useState("none");
+  const [passwords, setPasswords] = useState({password:"", confirmPassword:""});
+  const [errorState, setErrorState] = useState({error:"", display:"none"});
   const [form] = Form.useForm();
 
+  //updates the password property of the passwords state
   const handlePassword = (value) => {
-    setPassword(value.target.value);
-    setDisplayError("none");
+    setPasswords({...passwords, password:value.target.value});
+    setErrorState({...errorState, display:"none"});
   }
 
+  //updates the confirmPassword property of the passwords state
   const handleConfirmPassword =  (value) => {
-    setConfirmPassword(value.target.value);
-    setDisplayError("none");
+    setPasswords({...passwords, confirmPassword:value.target.value});
+    setErrorState({...errorState, display:"none"});
   }
 
   const handlePasswordSubmit = () => {
     form.resetFields();
-    if(password === confirmPassword){
+    //Updates the user's password in the database if the two inputted passwords match
+    if(passwords.password === passwords.confirmPassword){
         axios.patch("http://localhost:4000/users/password", {
             user:{
                 username: LoginInfo.username,
-                password: password,
+                password: passwords.password,
             },
             favorites: LoginInfo.favorites
         }).then(result => {
@@ -36,11 +37,11 @@ const UserProfile = (props) => {
         })
     }
     else{
-        setErrorMessage("Password Does Not Match!")
-        setDisplayError("block")
+      setErrorState({error:"Password Does Not Match!", display:"block"});
     }
   }
 
+  //Creates and adds the links to the favorited drinks to the Favorite Drinks section
   const addLinks = () => {
     if (LoginInfo.favorites !== null) {
       if (LoginInfo.favorites.length > 0) {
@@ -54,27 +55,32 @@ const UserProfile = (props) => {
   };
   return (
     <article>
+      {/* Password change and username section */}
       <section style={styles.sections} className="p-10 rounded-md">
-        <Form className="flex flex-col gap-5" form={form} onFinish={() => handlePasswordSubmit()}>
+        <div className="flex flex-col gap-2">
+          {/* Ant Design Avatar component */}
           <Avatar size={150} icon={<UserOutlined />} className="mx-auto block"/>
-          <h2 className="text-white mx-auto text-2xl" tabIndex={1}>{props.name}</h2>
-          <section className="flex  flex-col gap-2 justify-center items-center">
-            <div className="mx-auto w-full sm:w-5/12">
-              <label className="text-white" tabIndex={1}>Change Password</label>
-              <Form.Item name="password" rules={[{ required: true, message: "Please input a password" }]} tabIndex={-1}>
-                <Input prefix={<LockOutlined />} placeholder="password" size="large" onChange={(value) => handlePassword(value)} tabIndex={1}/>
-              </Form.Item>
-            </div>
-            <Form.Item name="confirm-password" rules={[{ required: true, message: "Please input a password" }]} className="w-full sm:w-5/12" tabIndex={-1}>
-              <Input prefix={<LockOutlined />} placeholder="confirm password" size="large" onChange={(value) => handleConfirmPassword(value)} tabIndex={1}/>
+          {/* Contains the user's username */}
+          <h2 className="text-white mx-auto text-2xl mb-5" tabIndex={1}>{props.name}</h2>
+        </div>
+        {/* Password change form */}
+        <Form className="flex flex-col gap-2 justify-center items-center" form={form} onFinish={() => handlePasswordSubmit()}>
+          <div className="mx-auto w-full sm:w-5/12">
+            <label className="text-white" tabIndex={1}>Change Password</label>
+            <Form.Item name="password" rules={[{ required: true, message: "Please input a password" }]} tabIndex={-1}>
+              <Input prefix={<LockOutlined />} placeholder="password" size="large" onChange={(value) => handlePassword(value)} tabIndex={1}/>
             </Form.Item>
-            <p className="text-xl bg-black text-white p-3" style={{display:displayError}} tabIndex={1}>{errorMessage}</p>
-            <Button type="primary" htmlType="submit" className="w-2/6 sm:w-1/6 lg:w-1/12" tabIndex={1}>Submit</Button>
-          </section>
+          </div>
+          <Form.Item name="confirm-password" rules={[{ required: true, message: "Please input a password" }]} className="w-full sm:w-5/12" tabIndex={-1}>
+            <Input prefix={<LockOutlined />} placeholder="confirm password" size="large" onChange={(value) => handleConfirmPassword(value)} tabIndex={1}/>
+          </Form.Item>
+          <p className="text-xl bg-black text-white p-3" style={{display:errorState.display}} tabIndex={1}>{errorState.error}</p>
+          <Button type="primary" htmlType="submit" className="w-2/6 sm:w-1/6 lg:w-1/12" tabIndex={1}>Submit</Button>
         </Form>
       </section>
+      {/* Favorite Drinks section */}
       <section style={styles.sections} className="mt-5 p-10 rounded-md">
-        <h3 className="text-white text-2xl" tabIndex={1}>Favorite Drinks</h3>
+        <h2 className="text-white text-2xl" tabIndex={1}>Favorite Drinks</h2>
         {addLinks()}
       </section>
     </article>

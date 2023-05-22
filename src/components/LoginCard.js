@@ -35,7 +35,6 @@ const LoginCard = (props) => {
             navigate("/signup");
           } else {
             LoginInfo.username = result.data.result.user.username;
-            LoginInfo.password = result.data.result.user.password;
             axios.get(`http://localhost:4000/users/${LoginInfo.username}`).then((userInfo) => {
               LoginInfo.favorites = userInfo.data.favorites;
             });

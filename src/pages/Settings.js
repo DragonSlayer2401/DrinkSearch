@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import { LoginInfo } from "../global-objects/LoginInfo";
 
 function Settings() {
+  //Upercases the first letter of the username
   const uppercaseUsername = (username) => {
     if (username !== null) {
       const arr = Array.from(username);

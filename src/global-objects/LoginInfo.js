@@ -1,3 +1,3 @@
-let LoginInfo = {username:null, password:null, favorites:[]};
+let LoginInfo = {username:null, favorites:[]};
 
 export {LoginInfo};

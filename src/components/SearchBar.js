@@ -12,6 +12,8 @@ const SearchBar = () => {
   //Stores what the user has inputted into the search bar
   const updateInput = (event) => {
     setInput(event.target.value);
+    //Removes the error after the user starts typing
+    setError("");
   };
 
    //Extracts the ingredients out of response object
@@ -56,7 +58,7 @@ const SearchBar = () => {
         //Checks if there are no results from the API
         if (result.data.drinks === null) {
           //Sets the error message that is displayed under the search bar
-          setError(<p className="text-white bg-black p-3 text-lg" tabIndex={1}>Please enter a valid name!</p>);
+          setError(<p className="text-white bg-black p-3 text-lg" tabIndex={1} role="alert" id="search-error">Please enter a valid name!</p>);
         }
         else {
           //Passes the first drink result in the API to both the measurements and ingredients handlers
@@ -88,7 +90,7 @@ const SearchBar = () => {
     }
     else {
       //Sets the error message if nothing is inputted
-      setError(<p className="text-white bg-black p-3 text-lg" tabIndex={1}>Please enter a valid name!</p>);
+      setError(<p className="text-white bg-black p-3 text-lg" tabIndex={1} id="search-error" role="alert">Please enter a valid name!</p>);
     }
   };
   return (
@@ -102,6 +104,7 @@ const SearchBar = () => {
         onSearch={(value) => searchHandler(value)}
         size="large"
         tabIndex={1}
+        aria-invalid = {error ? "true" : "false"}
       />
       {error}
     </article>
